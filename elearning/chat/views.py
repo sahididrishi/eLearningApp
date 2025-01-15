@@ -1,3 +1,12 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
-# Create your views here.
+@login_required
+def chat_room(request, room_name):
+    """
+    Display the chat room template. Actual real-time
+    communication is handled by Channels & WebSockets.
+    """
+    return render(request, 'chat/chat_room.html', {
+        'room_name': room_name
+    })
