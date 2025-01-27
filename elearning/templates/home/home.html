@@ -1,5 +1,4 @@
 <!-- templates/home/home.html -->
-
 {% extends "base.html" %}
 
 {% block content %}
@@ -8,9 +7,12 @@
     <p class="lead">Your hub for online learning.</p>
     <hr class="my-4">
     {% if user.is_authenticated %}
-        <p>Explore your courses <a href="{% url 'browse-courses' %}">here</a>.</p>
+        <p>Go to your <a href="{% url 'users:profile' %}">profile</a> to get started.</p>
     {% else %}
-        <p><a href="{% url 'login' %}">Login</a> or <a href="{% url 'register' %}">Register</a> to get started.</p>
+        <p>
+            <a href="{% url 'users:login' %}">Login</a> or
+            <a href="{% url 'users:register' %}">Register</a> to begin.
+        </p>
     {% endif %}
 </div>
 {% endblock %}

@@ -1,4 +1,4 @@
-
+# users/forms.py
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser
@@ -6,7 +6,6 @@ from .models import CustomUser
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
     real_name = forms.CharField(max_length=150, required=True)
-    role = forms.ChoiceField(choices=CustomUser.ROLE_CHOICES, required=True)
     profile_picture = forms.ImageField(required=False)
 
     class Meta:

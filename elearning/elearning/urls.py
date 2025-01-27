@@ -1,33 +1,23 @@
+# elearning_project/urls.py
 from django.contrib import admin
-from django.shortcuts import redirect
 from django.urls import path, include
-from rest_framework import routers
-from users.api import CustomUserViewSet
+from django.conf import settings
+from django.conf.urls.static import static
+from django.shortcuts import render
 
-router = routers.DefaultRouter()
-router.register(r'users', CustomUserViewSet, basename='users_api')
-
-def home_redirect(request):
-    """
-    If someone hits the root URL `/`, just redirect them
-    to the login page or any other page you prefer.
-    """
-    return redirect('users:login')
+def home(request):
+    return render(request, 'home/home.html')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    # Users app
     path('accounts/', include('users.urls', namespace='users')),
-
-    # Courses app
     path('courses/', include('courses.urls', namespace='courses')),
-
-    # Chat app
     path('chat/', include('chat.urls', namespace='chat')),
+    path('', home, name='home'),  # Root URL -> Home page
 
-    path('api/', include(router.urls)),  # DRF routes
-
-    path('', home_redirect, name='root_redirect'),
-
+    # Include API routes (from api_urls.py) if desired:
+    # path('api/', include('elearning_project.api_urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

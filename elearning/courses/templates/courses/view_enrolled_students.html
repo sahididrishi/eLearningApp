@@ -1,0 +1,29 @@
+<!-- courses/templates/courses/view_enrolled_students.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Enrolled Students for "{{ course.title }}"</h2>
+{% if enrollments %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Student Username</th>
+                <th>Real Name</th>
+                <th>Enrolled At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for enrollment in enrollments %}
+                <tr>
+                    <td>{{ enrollment.student.username }}</td>
+                    <td>{{ enrollment.student.real_name }}</td>
+                    <td>{{ enrollment.enrolled_at }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No students have enrolled in this course yet.</p>
+{% endif %}
+<a href="{% url 'courses:course-detail' course_id=course.id %}" class="btn btn-secondary">Back to Course</a>
+{% endblock %}

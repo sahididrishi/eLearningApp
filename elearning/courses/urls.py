@@ -1,13 +1,16 @@
+# courses/urls.py
 from django.urls import path
 from . import views
 
-app_name = 'courses'
+app_name = "courses"
 
 urlpatterns = [
-    path('', views.course_list, name='course_list'),           # /courses/
-    path('create/', views.create_course, name='create_course'),# /courses/create/
-    path('<int:pk>/', views.course_detail, name='course_detail'),    # /courses/1/
-    path('<int:pk>/enroll/', views.enroll_in_course, name='enroll'), # /courses/1/enroll/
-    path('<int:pk>/feedback/', views.leave_feedback, name='leave_feedback'), # /courses/1/feedback/
-    path('<int:course_id>/block/<int:student_id>/', views.block_student, name='block_student'),
+    path('create/', views.create_course, name='create-course'),
+    path('browse/', views.browse_courses, name='browse-courses'),
+    path('<int:course_id>/', views.course_detail, name='course-detail'),
+    path('<int:course_id>/enroll/', views.enroll_course, name='enroll-course'),
+    path('<int:course_id>/update/', views.update_course, name='update-course'),
+    path('<int:course_id>/delete/', views.delete_course, name='delete-course'),
+    path('<int:course_id>/students/', views.view_enrolled_students, name='view-enrolled-students'),
+    path('<int:course_id>/upload-material/', views.upload_material, name='upload-material'),
 ]
