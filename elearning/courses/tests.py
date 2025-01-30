@@ -1,4 +1,4 @@
-# courses/tests.py
+
 from django.test import TestCase
 
 class CoursesTests(TestCase):

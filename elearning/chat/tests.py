@@ -1,4 +1,3 @@
-# chat/tests.py
 from django.test import TestCase
 
 class ChatTests(TestCase):

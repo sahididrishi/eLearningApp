@@ -1,10 +1,10 @@
-# elearning_project/settings.py
+
 import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-REPLACE_ME'
+SECRET_KEY = 'a7cbvyga#hubn)mcg*m$s^ryr-w$g7^*^$)14a_x)b6r$+tj#='
 DEBUG = True
 ALLOWED_HOSTS = []
 
