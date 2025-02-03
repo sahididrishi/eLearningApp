@@ -10,7 +10,10 @@ def home(request):
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('users/', include('users.urls', namespace='users')),
+
     path('accounts/', include('users.urls', namespace='users')),
+
     path('courses/', include('courses.urls', namespace='courses')),
     path('chat/', include('chat.urls', namespace='chat')),
     path('', home, name='home'),  # Root URL -> Home page

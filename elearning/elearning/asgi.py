@@ -10,10 +10,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'elearning.settings')
 django.setup()
 
 application = ProtocolTypeRouter({
-    "http": get_asgi_application(),  # Handles traditional HTTP
+    "http": get_asgi_application(),  # Handles basic HTTP
     "websocket": AuthMiddlewareStack(
         URLRouter(
-            chat.routing.websocket_urlpatterns  # Routes for WebSockets
+            chat.routing.websocket_urlpatterns  # Routes  WebSockets
         )
     ),
 })

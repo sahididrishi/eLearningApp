@@ -13,6 +13,7 @@ class CustomUser(AbstractUser):
     real_name = models.CharField(max_length=150, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     role = models.CharField(max_length=7, choices=ROLE_CHOICES, default=STUDENT)
+    status = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.username

@@ -1,24 +1,41 @@
-
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <h2>Your Profile</h2>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ u_form|crispy }}
-            <button type="submit" class="btn btn-success">Update</button>
-        </form>
-    </div>
-    <div class="col-md-4">
-        <h2>Profile Picture</h2>
-        {% if user.profile_picture %}
-            <img src="{{ user.profile_picture.url }}" class="img-thumbnail" alt="Profile Picture">
-        {% else %}
-            <img src="https://via.placeholder.com/150" class="img-thumbnail" alt="Default Profile Picture">
-        {% endif %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4 text-center">
+            <h3>Profile Picture</h3>
+            <img src="{{ user.profile_picture.url }}" alt="Profile Picture"
+                class="img-fluid rounded-circle shadow" style="width: 200px; height: 200px; object-fit: cover;">
+            <div class="mt-3">
+                <p><strong>Status:</strong> {{ user.status }}</p>
+                <a href="{% url 'users:update-status' %}" class="btn btn-secondary">Update Status</a>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <h2>Your Profile</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+
+                    {{ u_form.username|as_crispy_field }}
+                </div>
+                <div class="mb-3">
+
+                    {{ u_form.email|as_crispy_field }}
+                </div>
+                <div class="mb-3">
+
+                    {{ u_form.real_name|as_crispy_field }}
+                </div>
+                <div class="mb-3">
+
+                    {{ u_form.profile_picture|as_crispy_field }}
+                </div>
+                <button type="submit" class="btn btn-success mt-2">Update Profile</button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
