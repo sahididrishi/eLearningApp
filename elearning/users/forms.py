@@ -1,4 +1,3 @@
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomUser
@@ -20,8 +19,11 @@ class UserUpdateForm(forms.ModelForm):
         model = CustomUser
         fields = ['username', 'email', 'real_name', 'profile_picture']
 
-
+# Form to update the single status field
 class StatusUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
         fields = ['status']
+        widgets = {
+            'status': forms.Textarea(attrs={'rows': 2, 'placeholder': "What's on your mind?"})
+        }

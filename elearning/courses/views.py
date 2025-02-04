@@ -1,10 +1,9 @@
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from users.decorators import teacher_required, student_required
-from .models import Course, Enrollment, CourseMaterial
-from .forms import CourseForm, CourseMaterialForm
+from .models import Course, Enrollment, CourseMaterial, Feedback
+from .forms import CourseForm, CourseMaterialForm, FeedbackForm
 
 @login_required
 @teacher_required
@@ -13,7 +12,7 @@ def create_course(request):
         form = CourseForm(request.POST)
         if form.is_valid():
             course = form.save(commit=False)
-            course.teacher = request.user
+            course.teacher = request.user  # current user is teacher
             course.save()
             messages.success(request, 'Course created successfully!')
             return redirect('courses:course-detail', course_id=course.id)
@@ -30,25 +29,33 @@ def browse_courses(request):
 def course_detail(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     is_enrolled = False
+
     if request.user.role == 'Student':
         is_enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
 
-    materials = course.materials.all()
-    if request.user.role == 'Student' and not is_enrolled:
-        messages.error(request, 'You must enroll in this course to view its materials.')
-        return redirect('courses:browse-courses')
+    # Show materials if enrolled or teacher
+    materials = None
+    if is_enrolled or (request.user == course.teacher):
+        materials = course.materials.all()
+
+    # Fetch feedback objects
+    feedback_list = course.feedbacks.select_related('student').order_by('-created_at')
 
     return render(request, 'courses/course_detail.html', {
         'course': course,
         'is_enrolled': is_enrolled,
-        'materials': materials
+        'materials': materials,
+        'feedback_list': feedback_list,
     })
 
 @login_required
 @student_required
 def enroll_course(request, course_id):
     course = get_object_or_404(Course, id=course_id)
-    enrollment, created = Enrollment.objects.get_or_create(student=request.user, course=course)
+    enrollment, created = Enrollment.objects.get_or_create(
+        student=request.user,
+        course=course
+    )
     if created:
         messages.success(request, f'You have successfully enrolled in {course.title}!')
     else:
@@ -105,15 +112,33 @@ def upload_material(request, course_id):
         form = CourseMaterialForm()
     return render(request, 'courses/upload_material.html', {'form': form, 'course': course})
 
-# DRF ViewSet
-from rest_framework import viewsets, permissions
-from .serializers import CourseSerializer
+# NEW: leave_feedback view
+@login_required
+@student_required
+def leave_feedback(request, course_id):
+    """
+    Allows an enrolled student to leave feedback for a specific course.
+    """
+    course = get_object_or_404(Course, id=course_id)
+    # Ensure student is enrolled in this course
+    is_enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
+    if not is_enrolled:
+        messages.error(request, "You must be enrolled in this course to leave feedback.")
+        return redirect('courses:course-detail', course_id=course.id)
 
-class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all()
-    serializer_class = CourseSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            feedback_obj = form.save(commit=False)
+            feedback_obj.course = course
+            feedback_obj.student = request.user
+            feedback_obj.save()
+            messages.success(request, "Feedback posted successfully!")
+            return redirect('courses:course-detail', course_id=course.id)
+    else:
+        form = FeedbackForm()
 
-    def perform_create(self, serializer):
-        # If teacher is always current user
-        serializer.save(teacher=self.request.user)
+    return render(request, 'courses/leave_feedback.html', {
+        'course': course,
+        'form': form,
+    })

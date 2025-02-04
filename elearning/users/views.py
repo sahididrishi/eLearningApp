@@ -1,12 +1,11 @@
+
 from django.contrib.auth import logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 
 from courses.models import Enrollment, Course
-
-from courses.models import Enrollment
 from .forms import UserRegisterForm, UserUpdateForm, StatusUpdateForm
 from .models import CustomUser
 
@@ -35,7 +34,6 @@ def profile(request):
             return redirect('users:profile')
     else:
         u_form = UserUpdateForm(instance=request.user)
-
     context = {
         'u_form': u_form
     }
@@ -43,33 +41,52 @@ def profile(request):
 
 @login_required
 def update_status(request):
+    """
+    View to update the single status field on the CustomUser model.
+    """
     if request.method == 'POST':
-        form = StatusUpdateForm(request.POST, request.FILES, instance=request.user)
+        form = StatusUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('users:profile')
+            messages.success(request, 'Your status has been updated!')
+            return redirect('users:profile')  # or redirect to the user home page if you prefer
     else:
         form = StatusUpdateForm(instance=request.user)
+    return render(request, 'users/update_status.html', {'form': form})
 
-    return render(request, 'users/update_status.html',{'form': form})
 @login_required
 def user_courses(request):
-    if request.user.role =='Student':
+    if request.user.role == 'Student':
         enrollments = Enrollment.objects.filter(student=request.user)
-        courses = [enrollments.course for enrollment in enrollments]
+        courses = [enrollment.course for enrollment in enrollments]
     else:
         courses = Course.objects.filter(teacher=request.user)
-    return render(request,'users/user_courses.html',{'courses':courses})
+    return render(request, 'users/user_courses.html', {'courses': courses})
 
-@require_http_methods(["GET"])  # Accept only GET; no 405 errors if we want a link-based logout
+@require_http_methods(["GET"])
 def custom_logout(request):
-    """
-    Logs out the user and renders the logout.html confirmation page via a GET request.
-    """
     logout(request)
     return render(request, 'users/logout.html')
 
-# DRF ViewSet
+# User home view that shows profile info, courses, and the single status.
+@login_required
+def user_home(request, username):
+    page_user = get_object_or_404(CustomUser, username=username)
+    if page_user.role == 'Student':
+        enrollments = Enrollment.objects.filter(student=page_user).select_related('course')
+        courses = [enrollment.course for enrollment in enrollments]
+    else:
+        courses = Course.objects.filter(teacher=page_user)
+
+    # For a single status, we simply use the status field from the user model.
+    # Optionally, if the logged-in user is viewing their own page, you can let them update it.
+    context = {
+        'page_user': page_user,
+        'courses': courses,
+    }
+    return render(request, 'users/user_home.html', context)
+
+# DRF ViewSet (if you use it)
 from rest_framework import viewsets, permissions
 from .serializers import CustomUserSerializer
 

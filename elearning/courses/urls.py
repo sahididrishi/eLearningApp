@@ -1,4 +1,3 @@
-
 from django.urls import path
 from . import views
 
@@ -13,4 +12,7 @@ urlpatterns = [
     path('<int:course_id>/delete/', views.delete_course, name='delete-course'),
     path('<int:course_id>/students/', views.view_enrolled_students, name='view-enrolled-students'),
     path('<int:course_id>/upload-material/', views.upload_material, name='upload-material'),
+
+    # NEW: Feedback route
+    path('<int:course_id>/feedback/', views.leave_feedback, name='leave-feedback'),
 ]

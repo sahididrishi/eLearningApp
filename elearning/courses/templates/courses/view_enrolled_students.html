@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block content %}
@@ -15,7 +14,12 @@
         <tbody>
             {% for enrollment in enrollments %}
                 <tr>
-                    <td>{{ enrollment.student.username }}</td>
+                    <!-- Updated line below -->
+                    <td>
+                        <a href="{% url 'users:user-home' username=enrollment.student.username %}">
+                            {{ enrollment.student.username }}
+                        </a>
+                    </td>
                     <td>{{ enrollment.student.real_name }}</td>
                     <td>{{ enrollment.enrolled_at }}</td>
                 </tr>
