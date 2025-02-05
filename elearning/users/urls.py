@@ -17,5 +17,7 @@ urlpatterns = [
     path('logout/', views.custom_logout, name='logout'),
 
     # NEW route for the user's public home page
+
+    path('search/', views.search_users, name='search-users'),
     path('<str:username>/', views.user_home, name='user-home'),
 ]

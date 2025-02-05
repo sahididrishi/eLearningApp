@@ -1,22 +1,22 @@
-<!-- base.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>eLearning Platform</title>
-
-    <!-- Bootstrap CSS (optional but recommended) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     {% load static %}
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <!-- Brand / Logo -->
             <a class="navbar-brand" href="{% url 'home' %}">eLearning</a>
 
-            <!-- Navbar Toggler for mobile -->
+            <!-- Navbar Toggler (for mobile) -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -26,30 +26,32 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
 
-                    <!-- Example link to Courses (if you have a courses namespace) -->
+                    <!-- Courses link (always visible) -->
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'courses:browse-courses' %}">Courses</a>
                     </li>
 
-                    <!-- If the user is authenticated, show logout/Profile/etc. -->
+                    <!-- Chat link (visible only if user is authenticated) -->
                     {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'chat:global-chat-room' %}">Chat</a>
+                        </li>
+                    {% endif %}
 
+                    <!-- User-Specific Links -->
+                    {% if user.is_authenticated %}
                         {% if user.role == 'Teacher' %}
-                            <!-- Teacher-only link -->
+                            <!-- Example: teacher-only link -->
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'courses:create-course' %}">Create Course</a>
                             </li>
                         {% endif %}
-
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'users:profile' %}">Profile</a>
                         </li>
                         <li class="nav-item">
-                            <!-- Logout link via GET (assuming custom logout view accepts GET) -->
                             <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
                         </li>
-
-                    <!-- If the user is not logged in, show login/register links -->
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'users:login' %}">Login</a>
@@ -63,8 +65,10 @@
         </div>
     </nav>
 
+    <!-- Main Content Container -->
     <div class="container mt-4">
-        <!-- Display messages if using Django's messages framework -->
+
+        <!-- Display messages from Django's messages framework -->
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }}" role="alert">
@@ -73,12 +77,12 @@
             {% endfor %}
         {% endif %}
 
-        <!-- Main content block to be overridden by child templates -->
+        <!-- Content block to be overridden by child templates -->
         {% block content %}
         {% endblock %}
     </div>
 
-    <!-- Bootstrap JS (optional) -->
+    <!-- Bootstrap JS (optional, for responsive navbar toggling) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

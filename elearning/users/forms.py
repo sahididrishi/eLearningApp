@@ -27,3 +27,18 @@ class StatusUpdateForm(forms.ModelForm):
         widgets = {
             'status': forms.Textarea(attrs={'rows': 2, 'placeholder': "What's on your mind?"})
         }
+
+
+class UserSearchForm(forms.Form):
+    query = forms.CharField(
+        required=False,
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Search by username or real name'
+        })
+    )
+    role = forms.ChoiceField(
+        required=False,
+        choices=[('', 'Any'), ('Student', 'Student'), ('Teacher', 'Teacher')],
+        widget=forms.Select()
+    )

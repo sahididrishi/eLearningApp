@@ -1,9 +1,9 @@
 
 from django.urls import path
-from . import views
+from .views import global_chat_room
 
-app_name = "chat"
+app_name = 'chat'
 
 urlpatterns = [
-    path('<str:room_name>/', views.room, name='chat-room'),
+    path('', global_chat_room, name='global-chat-room'),
 ]

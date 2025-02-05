@@ -1,4 +1,5 @@
-
+# users/views.py
+from django.db.models import Q  # Import Q from Django's db.models
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -6,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 
 from courses.models import Enrollment, Course
-from .forms import UserRegisterForm, UserUpdateForm, StatusUpdateForm
+from .forms import UserRegisterForm, UserUpdateForm, StatusUpdateForm, UserSearchForm
 from .models import CustomUser
 
 def home(request):
@@ -49,7 +50,7 @@ def update_status(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Your status has been updated!')
-            return redirect('users:profile')  # or redirect to the user home page if you prefer
+            return redirect('users:profile')
     else:
         form = StatusUpdateForm(instance=request.user)
     return render(request, 'users/update_status.html', {'form': form})
@@ -77,16 +78,40 @@ def user_home(request, username):
         courses = [enrollment.course for enrollment in enrollments]
     else:
         courses = Course.objects.filter(teacher=page_user)
-
-    # For a single status, we simply use the status field from the user model.
-    # Optionally, if the logged-in user is viewing their own page, you can let them update it.
     context = {
         'page_user': page_user,
         'courses': courses,
     }
     return render(request, 'users/user_home.html', context)
 
-# DRF ViewSet (if you use it)
+# NEW: Search view for teachers to search for users
+@login_required
+def search_users(request):
+    form = UserSearchForm(request.GET or None)
+    results = []
+    if form.is_valid():
+        query = form.cleaned_data.get('query', '')
+        role = form.cleaned_data.get('role', '')
+        # Base queryset
+        users_qs = CustomUser.objects.all()
+        # Filter by role if specified
+        if role:
+            users_qs = users_qs.filter(role=role)
+        # Filter by username or real_name if query is provided
+        if query:
+            users_qs = users_qs.filter(
+                Q(username__icontains=query) | Q(real_name__icontains=query)
+            )
+        # Exclude the current teacher from results
+        users_qs = users_qs.exclude(pk=request.user.pk)
+        results = users_qs
+    context = {
+        'form': form,
+        'results': results,
+    }
+    return render(request, 'users/search_users.html', context)
+
+# DRF ViewSet for API (if used)
 from rest_framework import viewsets, permissions
 from .serializers import CustomUserSerializer
 

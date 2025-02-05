@@ -1,4 +1,3 @@
-
 import os
 import django
 from channels.routing import ProtocolTypeRouter, URLRouter
@@ -10,10 +9,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'elearning.settings')
 django.setup()
 
 application = ProtocolTypeRouter({
-    "http": get_asgi_application(),  # Handles basic HTTP
+    "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter(
-            chat.routing.websocket_urlpatterns  # Routes  WebSockets
+            chat.routing.websocket_urlpatterns
         )
     ),
 })
