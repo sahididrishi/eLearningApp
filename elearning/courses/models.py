@@ -32,18 +32,17 @@ class CourseMaterial(models.Model):
 
 
 class Feedback(models.Model):
-    course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='feedbacks')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='feedbacks')
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='feedbacks')
     comment = models.TextField()
     rating = models.PositiveIntegerField(
-        default=5,
-        validators=[MinValueValidator(1), MaxValueValidator(10)]
+        default=3,
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Feedback by {self.student.username} on {self.course.title}"
-
 
 class CourseBlock(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='blocks')

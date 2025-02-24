@@ -12,10 +12,24 @@ class CourseMaterialForm(forms.ModelForm):
         fields = ['title', 'file']
 
 # NEW: FeedbackForm
+RATING_CHOICES = [
+    (1, '1'),
+    (2, '2'),
+    (3, '3'),
+    (4, '4'),
+    (5, '5'),
+]
+
 class FeedbackForm(forms.ModelForm):
+    rating = forms.ChoiceField(
+        choices=RATING_CHOICES,
+        widget=forms.RadioSelect(),
+        label='Rating'
+    )
+
     class Meta:
         model = Feedback
-        fields = ['rating', 'comment']  # Adjust as desired (e.g., just 'comment')
-        widgets = {
-            'comment': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Write your feedback...'}),
+        fields = ['rating', 'comment']
+        labels = {
+            'comment': 'Comment',
         }
