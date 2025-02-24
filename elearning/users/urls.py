@@ -22,6 +22,10 @@ urlpatterns = [
 
     path('profile/<int:user_id>/', views.view_profile, name='view-profile'),
     path('notifications/', views.notifications_view, name='notifications'),
+
+
+
+    #should be in last
     path('<str:username>/', views.user_home, name='user-home'),
 
 ]

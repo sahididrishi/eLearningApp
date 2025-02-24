@@ -139,5 +139,13 @@ def view_profile(request, user_id):
 
 @login_required
 def notifications_view(request):
+    # Get all unread notifications for the logged-in user
+    unread_notifications = request.user.notifications.filter(is_read=False)
+
+    # Mark them as read
+    unread_notifications.update(is_read=True)
+
+    # Now fetch all notifications (or just unread ones if you prefer)
     notifications = request.user.notifications.all().order_by('-created_at')
+
     return render(request, 'users/notifications.html', {'notifications': notifications})
