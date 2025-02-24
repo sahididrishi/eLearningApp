@@ -26,42 +26,53 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             {% if user.is_authenticated %}
-              <!-- 1. Notification Bell Icon -->
+              <!-- Notification Bell Icon -->
               <li class="nav-item position-relative">
                 <a class="nav-link" href="{% url 'users:notifications' %}">
                   <i class="bi bi-bell fs-5"></i>
                   {% if unread_count > 0 %}
-                    <span class="position-absolute top-1 start-98 translate-middle badge rounded-pill bg-danger"
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                           style="transform: translate(-40%, -20%);">
                       {{ unread_count }}
                     </span>
                   {% endif %}
                 </a>
               </li>
-              <!-- 2. Courses -->
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'courses:browse-courses' %}">Courses</a>
-              </li>
-              <!-- 3. Create Course (only for teachers) -->
-              {% if user.role == "Teacher" %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'courses:create-course' %}">Create Course</a>
-              </li>
-              {% endif %}
-              <!-- 4. Search Users -->
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'users:global-search' %}">Search Users</a>
-              </li>
-              <!-- 5. Profile -->
+            {% endif %}
+
+            <!-- Courses -->
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'courses:browse-courses' %}">Courses</a>
+            </li>
+
+            <!-- Create Course (only for teachers) -->
+            {% if user.is_authenticated and user.role == "Teacher" %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'courses:create-course' %}">Create Course</a>
+            </li>
+            {% endif %}
+
+            <!-- Search Users -->
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'users:global-search' %}">Search Users</a>
+            </li>
+
+            <!-- Chat link -->
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'chat:global-chat-room' %}">Chat</a>
+            </li>
+
+            {% if user.is_authenticated %}
+              <!-- Profile -->
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'users:profile' %}">Profile</a>
               </li>
-              <!-- 6. Logout -->
+              <!-- Logout -->
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
               </li>
             {% else %}
-              <!-- If not logged in, show Login and Register -->
+              <!-- Login & Register for unauthenticated -->
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'users:login' %}">Login</a>
               </li>

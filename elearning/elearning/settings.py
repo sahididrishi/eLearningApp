@@ -65,7 +65,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'elearning.wsgi.application'
-ASGI_APPLICATION = 'elearning.asgi.application'  # For Channelss
+ASGI_APPLICATION = 'elearning.asgi.application'  # For Channels
 
 # Database (SQLite for dev; change to PostgreSQL in production)
 DATABASES = {

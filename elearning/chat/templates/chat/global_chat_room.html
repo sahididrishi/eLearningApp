@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Global Chat Room</h2>
+  <div id="chat-log" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px;"></div>
+  <div class="input-group mt-3">
+    <input id="chat-message-input" type="text" class="form-control" placeholder="Type your message...">
+    <button id="chat-message-send" class="btn btn-primary">Send</button>
+  </div>
+</div>
+
+<script>
+  // Set the room name to "global" for the global chat room
+  const roomName = "global";
+  // Create a new WebSocket connection using the full URL
+  const chatSocket = new WebSocket(
+      'ws://' + window.location.host + '/ws/chat/' + roomName + '/'
+  );
+
+  // When a message is received from the WebSocket
+  chatSocket.onmessage = function(e) {
+      const data = JSON.parse(e.data);
+      const chatLog = document.getElementById('chat-log');
+      const message = `<p><strong>${data.username}:</strong> ${data.message}</p>`;
+      chatLog.innerHTML += message;
+      chatLog.scrollTop = chatLog.scrollHeight;
+  };
+
+  chatSocket.onclose = function(e) {
+      console.error('Chat socket closed unexpectedly');
+  };
+
+  // Send message when the "Send" button is clicked
+  document.getElementById('chat-message-send').onclick = function(e) {
+      const inputEl = document.getElementById('chat-message-input');
+      const message = inputEl.value;
+      if (message.trim() !== '') {
+          chatSocket.send(JSON.stringify({'message': message}));
+          inputEl.value = '';
+      }
+  };
+
+  // Optionally send message on Enter key
+  document.getElementById('chat-message-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+          e.preventDefault();
+          document.getElementById('chat-message-send').click();
+      }
+  });
+</script>
+{% endblock %}
