@@ -15,4 +15,6 @@ urlpatterns = [
 
     # NEW: Feedback route
     path('<int:course_id>/feedback/', views.leave_feedback, name='leave-feedback'),
+    path('<int:course_id>/block_student/<int:student_id>/', views.block_student, name='block-student'),
+    path('by-teacher/<int:teacher_id>/', views.teacher_course_list, name='teacher-course-list'),
 ]

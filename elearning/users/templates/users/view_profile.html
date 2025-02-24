@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Profile Photo -->
+        <div class="col-md-4 text-center">
+            {% if user_obj.profile_picture %}
+                <img src="{{ user_obj.profile_picture.url }}" alt="{{ user_obj.username }}"
+                     class="img-fluid rounded-circle"
+                     style="width: 200px; height: 200px; object-fit: cover;">
+            {% else %}
+                <img src="{% static 'images/default_profile.jpg' %}" alt="Default profile"
+                     class="img-fluid rounded-circle"
+                     style="width: 200px; height: 200px; object-fit: cover;">
+            {% endif %}
+        </div>
+
+        <!-- Profile Info -->
+        <div class="col-md-8">
+            <h2>{{ user_obj.real_name }}</h2>
+            <p><strong>Username:</strong> {{ user_obj.username }}</p>
+            <p><strong>Role:</strong> {{ user_obj.role }}</p>
+
+            {% if user_obj.role == 'Teacher' %}
+                <hr>
+                <h4>Courses Created</h4>
+                {% if courses_created %}
+                    <ul class="list-group">
+                        {% for course in courses_created %}
+                            <li class="list-group-item">
+                                <a href="{% url 'courses:course-detail' course.id %}">{{ course.title }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No courses created yet.</p>
+                {% endif %}
+            {% else %}
+                <!-- If user is a student, show different info if needed -->
+                <p><strong>Status:</strong> {{ user_obj.status }}</p>
+                <!-- Optionally show enrolled courses, etc. -->
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

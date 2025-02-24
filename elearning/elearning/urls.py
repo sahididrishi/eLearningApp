@@ -12,7 +12,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls', namespace='users')),
 
-    path('accounts/', include('users.urls', namespace='users')),
+    path('accounts/', include('users.urls', namespace='accounts')),
 
     path('courses/', include('courses.urls', namespace='courses')),
     path('chat/', include('chat.urls', namespace='chat')),

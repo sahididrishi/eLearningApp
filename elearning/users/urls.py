@@ -18,6 +18,10 @@ urlpatterns = [
 
     # NEW route for the user's public home page
 
-    path('search/', views.search_users, name='search-users'),
+    path('global-search/', views.global_search, name='global-search'),
+
+    path('profile/<int:user_id>/', views.view_profile, name='view-profile'),
+    path('notifications/', views.notifications_view, name='notifications'),
     path('<str:username>/', views.user_home, name='user-home'),
+
 ]

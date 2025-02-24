@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from users.decorators import teacher_required, student_required
-from .models import Course, Enrollment, CourseMaterial, Feedback
+from users.models import CustomUser
+from .models import Course, Enrollment, CourseMaterial, Feedback,CourseBlock
 from .forms import CourseForm, CourseMaterialForm, FeedbackForm
+from django.contrib.auth import get_user_model
 
 @login_required
 @teacher_required
@@ -52,6 +54,10 @@ def course_detail(request, course_id):
 @student_required
 def enroll_course(request, course_id):
     course = get_object_or_404(Course, id=course_id)
+    if CourseBlock.objects.filter(course=course, student=request.user).exists():
+        messages.error(request, "You are blocked from enrolling in this course.")
+        return redirect('courses:browse-courses')  # or course detail
+
     enrollment, created = Enrollment.objects.get_or_create(
         student=request.user,
         course=course
@@ -91,9 +97,11 @@ def delete_course(request, course_id):
 def view_enrolled_students(request, course_id):
     course = get_object_or_404(Course, id=course_id, teacher=request.user)
     enrollments = course.enrollments.select_related('student')
+    blocked_students = course.blocks.select_related('student')
     return render(request, 'courses/view_enrolled_students.html', {
         'course': course,
-        'enrollments': enrollments
+        'enrollments': enrollments,
+        'blocked_students': blocked_students
     })
 
 @login_required
@@ -141,4 +149,34 @@ def leave_feedback(request, course_id):
     return render(request, 'courses/leave_feedback.html', {
         'course': course,
         'form': form,
+    })
+
+
+@login_required
+@teacher_required
+def block_student(request, course_id, student_id):
+    course = get_object_or_404(Course, id=course_id, teacher=request.user)
+    student = get_object_or_404(CustomUser, id=student_id)
+
+    # Create a CourseBlock record if not exists
+    block, created = CourseBlock.objects.get_or_create(course=course, student=student)
+    if created:
+        messages.success(request, f"{student.username} has been blocked from {course.title}.")
+
+        # Optionally remove any existing enrollment
+        Enrollment.objects.filter(student=student, course=course).delete()
+    else:
+        messages.info(request, f"{student.username} is already blocked from {course.title}.")
+
+    return redirect('courses:view-enrolled-students', course_id=course.id)
+
+User = get_user_model()
+
+@login_required
+def teacher_course_list(request, teacher_id):
+    teacher = get_object_or_404(User, pk=teacher_id, role='Teacher')
+    courses = teacher.courses.all()
+    return render(request, 'courses/teacher_course_list.html', {
+        'teacher': teacher,
+        'courses': courses,
     })

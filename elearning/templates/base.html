@@ -1,88 +1,93 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>eLearning Platform</title>
     {% load static %}
-
-
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons (for bell icon) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <!-- Brand / Logo -->
-            <a class="navbar-brand" href="{% url 'home' %}">eLearning</a>
+      <div class="container-fluid">
+        <!-- Brand/Logo on the left -->
+        <a class="navbar-brand" href="{% url 'home' %}">eLearning</a>
 
-            <!-- Navbar Toggler (for mobile) -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <!-- Navbar toggler for mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <!-- Navbar Links -->
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+        <!-- All other items on the right -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            {% if user.is_authenticated %}
+              <!-- Notification Bell to the left of Courses -->
+              <li class="nav-item position-relative">
+                <a class="nav-link" href="{% url 'users:notifications' %}">
+                  <i class="bi bi-bell fs-5"></i>
+                  {% if unread_count > 0 %}
+                    <span class="position-absolute top-1 start-99 translate-middle badge rounded-pill bg-danger"
+                        style="transform: translate(-40%, -20%);">
+                      {{ unread_count }}
+                    </span>
+                  {% endif %}
+                </a>
+              </li>
+            {% endif %}
 
-                    <!-- Courses link (always visible) -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'courses:browse-courses' %}">Courses</a>
-                    </li>
+            <!-- Courses link -->
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'courses:browse-courses' %}">Courses</a>
+            </li>
 
-                    <!-- Chat link (visible only if user is authenticated) -->
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'chat:global-chat-room' %}">Chat</a>
-                        </li>
-                    {% endif %}
+            <!-- Search Users link -->
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'users:global-search' %}">Search Users</a>
+            </li>
 
-                    <!-- User-Specific Links -->
-                    {% if user.is_authenticated %}
-                        {% if user.role == 'Teacher' %}
-                            <!-- Example: teacher-only link -->
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'courses:create-course' %}">Create Course</a>
-                            </li>
-                        {% endif %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:profile' %}">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:register' %}">Register</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
+            {% if user.is_authenticated %}
+              <!-- Profile link -->
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:profile' %}">Profile</a>
+              </li>
+              <!-- Logout link -->
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
+              </li>
+            {% else %}
+              <!-- If user is not logged in -->
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:login' %}">Login</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'users:register' %}">Register</a>
+              </li>
+            {% endif %}
+          </ul>
         </div>
+      </div>
     </nav>
 
-    <!-- Main Content Container -->
+    <!-- Main Content -->
     <div class="container mt-4">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
 
-        <!-- Display messages from Django's messages framework -->
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}" role="alert">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-
-        <!-- Content block to be overridden by child templates -->
-        {% block content %}
-        {% endblock %}
+      {% block content %}
+      {% endblock %}
     </div>
 
-    <!-- Bootstrap JS (optional, for responsive navbar toggling) -->
+    <!-- Bootstrap JS (with Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,33 +1,53 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-<h2>Enrolled Students for "{{ course.title }}"</h2>
-{% if enrollments %}
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Student Username</th>
-                <th>Real Name</th>
-                <th>Enrolled At</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for enrollment in enrollments %}
+<div class="container mt-4">
+    <h2>Enrolled Students for "{{ course.title }}"</h2>
+    {% if enrollments %}
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <!-- Updated line below -->
-                    <td>
-                        <a href="{% url 'users:user-home' username=enrollment.student.username %}">
-                            {{ enrollment.student.username }}
-                        </a>
-                    </td>
+                    <th>Student Username</th>
+                    <th>Real Name</th>
+                    <th>Enrolled At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for enrollment in enrollments %}
+                <tr>
+                    <td>{{ enrollment.student.username }}</td>
                     <td>{{ enrollment.student.real_name }}</td>
                     <td>{{ enrollment.enrolled_at }}</td>
+                    <td>
+                        <!-- Button to block a student from this course -->
+                        <a href="{% url 'courses:block-student' course.id enrollment.student.id %}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Are you sure you want to block this student from the course?');">
+                           Block
+                        </a>
+                    </td>
                 </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No students enrolled in this course.</p>
+    {% endif %}
+
+    <hr>
+    <h4>Blocked Students</h4>
+    {% if blocked_students %}
+        <ul class="list-group">
+            {% for block in blocked_students %}
+                <li class="list-group-item">
+                    {{ block.student.username }}
+                </li>
             {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No students have enrolled in this course yet.</p>
-{% endif %}
-<a href="{% url 'courses:course-detail' course_id=course.id %}" class="btn btn-secondary">Back to Course</a>
+        </ul>
+    {% else %}
+        <p>No one is blocked from this course.</p>
+    {% endif %}
+</div>
 {% endblock %}

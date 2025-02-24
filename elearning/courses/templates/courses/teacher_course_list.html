@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Courses by {{ teacher.username }}</h2>
+    {% if courses %}
+        <ul class="list-group">
+        {% for course in courses %}
+            <li class="list-group-item">
+                <a href="{% url 'courses:course-detail' course.id %}">{{ course.title }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>{{ teacher.username }} has not created any courses yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

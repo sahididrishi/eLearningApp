@@ -84,32 +84,7 @@ def user_home(request, username):
     }
     return render(request, 'users/user_home.html', context)
 
-# NEW: Search view for teachers to search for users
-@login_required
-def search_users(request):
-    form = UserSearchForm(request.GET or None)
-    results = []
-    if form.is_valid():
-        query = form.cleaned_data.get('query', '')
-        role = form.cleaned_data.get('role', '')
-        # Base queryset
-        users_qs = CustomUser.objects.all()
-        # Filter by role if specified
-        if role:
-            users_qs = users_qs.filter(role=role)
-        # Filter by username or real_name if query is provided
-        if query:
-            users_qs = users_qs.filter(
-                Q(username__icontains=query) | Q(real_name__icontains=query)
-            )
-        # Exclude the current teacher from results
-        users_qs = users_qs.exclude(pk=request.user.pk)
-        results = users_qs
-    context = {
-        'form': form,
-        'results': results,
-    }
-    return render(request, 'users/search_users.html', context)
+
 
 # DRF ViewSet for API (if used)
 from rest_framework import viewsets, permissions
@@ -119,3 +94,50 @@ class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+
+
+@login_required
+def global_search(request):
+    query = request.GET.get('q', '').strip()
+    results = []
+
+    if query:
+        # Filter users by username or real_name
+        results = CustomUser.objects.filter(
+            Q(username__icontains=query) | Q(real_name__icontains=query)
+        )
+        # Optionally exclude the current user
+        results = results.exclude(pk=request.user.pk)
+
+    return render(request, 'users/global_search.html', {
+        'query': query,
+        'results': results,
+    })
+
+
+@login_required
+def view_profile(request, user_id):
+    user_obj = get_object_or_404(CustomUser, pk=user_id)
+
+    # Base context with the user object
+    context = {
+        'user_obj': user_obj
+    }
+
+    # If the user is a teacher, fetch the courses they have created
+    if user_obj.role == 'Teacher':
+        # Assuming your Course model has a ForeignKey 'teacher' with related_name='courses'
+        courses_created = Course.objects.filter(teacher=user_obj)
+        context['courses_created'] = courses_created
+
+    # If the user is a student, you can optionally fetch enrolled courses, etc.
+
+    return render(request, 'users/view_profile.html', context)
+
+
+@login_required
+def notifications_view(request):
+    notifications = request.user.notifications.all().order_by('-created_at')
+    return render(request, 'users/notifications.html', {'notifications': notifications})

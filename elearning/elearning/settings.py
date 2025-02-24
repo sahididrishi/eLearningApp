@@ -57,13 +57,14 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'users.context_processors.unread_notifications',
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'elearning.wsgi.application'
-ASGI_APPLICATION = 'elearning.asgi.application'  # For Channels
+ASGI_APPLICATION = 'elearning.asgi.application'  # For Channelss
 
 # Database (SQLite for dev; change to PostgreSQL in production)
 DATABASES = {

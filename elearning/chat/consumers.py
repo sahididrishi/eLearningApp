@@ -31,6 +31,7 @@ class GlobalChatConsumer(AsyncWebsocketConsumer):
         # Identify the sender (if authenticated)
         username = self.scope['user'].username if self.scope['user'].is_authenticated else "Anonymous"
 
+
         # Broadcast the message to the group
         await self.channel_layer.group_send(
             self.room_group_name,
