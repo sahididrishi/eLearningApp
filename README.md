@@ -12,8 +12,8 @@ pip install -r requirements.text
 
 
 ## Test_----
-### 1.coverage run --source='.' --omit='*/asgi.py,*/wsgi.py,*/manage.py' manage.py test   
-### or 
-### coverage run --source='.' manage.py test
-### 2.coverage report
-### 3.coverage html
+#### 1.coverage run --source='.' --omit='*/asgi.py,*/wsgi.py,*/manage.py' manage.py test   
+#### or 
+#### coverage run --source='.' manage.py test
+#### 2.coverage report
+#### 3.coverage html
