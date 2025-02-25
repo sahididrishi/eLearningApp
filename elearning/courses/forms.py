@@ -11,7 +11,7 @@ class CourseMaterialForm(forms.ModelForm):
         model = CourseMaterial
         fields = ['title', 'file']
 
-# NEW: FeedbackForm
+#FeedbackForm
 RATING_CHOICES = [
     (1, '1'),
     (2, '2'),

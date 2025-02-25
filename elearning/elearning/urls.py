@@ -16,10 +16,10 @@ urlpatterns = [
 
     path('courses/', include('courses.urls', namespace='courses')),
     path('chat/', include('chat.urls', namespace='chat')),
+    path('api/', include('elearning.api_urls')),
     path('', home, name='home'),  # Root URL -> Home page
 
-    # Include API routes (from api_urls.py) if desired:
-    # path('api/', include('elearning_project.api_urls')),
+
 ]
 
 if settings.DEBUG:

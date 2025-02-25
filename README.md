@@ -8,3 +8,12 @@ pip install -r requirements.text
 
 
 4. run the server using ```daphne elearning.asgi:application```
+
+
+
+Test_----
+1.coverage run --source='.' --omit='*/asgi.py,*/wsgi.py,*/manage.py' manage.py test   
+or 
+coverage run --source='.' manage.py test
+2.coverage report
+3.coverage html

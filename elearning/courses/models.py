@@ -32,7 +32,7 @@ class CourseMaterial(models.Model):
 
 
 class Feedback(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='feedbacks')
+    course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='feedbacks')
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='feedbacks')
     comment = models.TextField()
     rating = models.PositiveIntegerField(

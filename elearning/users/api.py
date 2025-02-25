@@ -1,7 +1,6 @@
-
 from rest_framework import viewsets
 from .models import CustomUser
-from .serializers import CustomUserSerializer  # you'd need a serializers.py too
+from .serializers import CustomUserSerializer
 
 class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
