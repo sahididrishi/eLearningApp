@@ -14,3 +14,4 @@ sqlparse==0.5.3
 pytest>=7.0
 pytest-django>=4.5
 coverage>=6.0
+whitenoise==6.4.0
