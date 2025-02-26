@@ -1,0 +1,78 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ workflow ]
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  deploy:
+    runs-on: contabo_vps
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          clean: true  # Ensure the workspace is cleaned before checkout
+
+      - name: Copy .elearning to .env
+        run: |
+          if [ -f /home/webapp/.envs/.elearning ]; then
+            echo "Copying /home/webapp/.envs/.elearning to .env..."
+            cp /home/webapp/.envs/.elearning .env
+          else
+            echo "Error: /home/webapp/.envs/.elearning file not found!"
+            exit 1
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.11'  # Use the Python version appropriate for your project
+
+      - name: Deploy Application
+        run: |
+          # Create staticfiles directory if it doesn't exist
+          echo "📁 Creating /home/webapp/staticfiles/elearning directory..."
+          if [ ! -d "/home/webapp/staticfiles/elearning" ]; then
+            mkdir -p /home/webapp/staticfiles/elearning 2>/dev/null || {
+              echo "❌ Failed to create directory. Permission denied."
+              exit 1
+            }
+          fi 
+          
+          # Stop and remove existing containers
+          echo "🛑 Stopping existing containers..."
+          docker compose down
+
+          # Build and start new containers
+          echo "🏗️ Building and starting containers..."
+          docker compose up -d --build
+          
+          # Wait for the database to be ready
+          docker compose exec -T web python manage.py wait_for_db
+          # Run migrations
+          echo "🔄 Running migrations..."
+          docker compose exec -T web python manage.py makemigrations
+          docker compose exec -T web python manage.py migrate --noinput
+          # Collect static files
+          echo "📦 Collecting static files..."
+          docker compose exec -T web python manage.py collectstatic --noinput
+
+          # Set proper permissions for static files
+          echo "🔐 Setting proper permissions for static files..."
+          docker compose exec -T web chown -R www-data:www-data /app/staticfiles
+          docker compose exec -T web chmod -R 755 /app/staticfiles
+
+          echo "🔄 Creating Nginx reload flag..."
+          touch /home/nasir/nginx-reload-required
+          
+          echo "✅ Deployment completed successfully!"
+
+      - name: Notify on Success
+        if: success()
+        run: echo "✅ Deployment completed successfully!"
+
+      - name: Notify on Failure
+        if: failure()
+        run: echo "❌ Deployment failed!"

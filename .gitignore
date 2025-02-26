@@ -75,3 +75,4 @@ local_settings.py
 # Ignore dump files
 *.dump
 *.sql
+/.env

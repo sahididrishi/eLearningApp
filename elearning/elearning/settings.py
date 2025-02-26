@@ -1,18 +1,20 @@
-
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'a7cbvyga#hubn)mcg*m$s^ryr-w$g7^*^$)14a_x)b6r$+tj#='
-DEBUG = True
-ALLOWED_HOSTS = []
-
+# Load sensitive information from environment variables
+SECRET_KEY = os.getenv('SECRET_KEY', 'a7cbvyga#hubn)mcg*m$s^ryr-w$g7^*^$)14a_x)b6r$+tj#=')
+DEBUG = os.getenv('DEBUG', True) == 'True'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 # Crispy Forms Configuration
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -27,8 +29,6 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'channels',
     'rest_framework',
-    'courses.apps.CoursesConfig',
-
     # Local Apps
     'users',
     'chat',
@@ -42,7 +42,6 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'elearning.urls'
@@ -50,13 +49,12 @@ ROOT_URLCONF = 'elearning.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR/ 'templates'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'users.context_processors.unread_notifications',
             ],
@@ -86,17 +84,14 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
 
 # Channels + Redis
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [("127.0.0.1", 6379)],
+            'hosts': [(os.getenv('REDIS_HOST', default='127.0.0.1'), os.getenv('REDIS_PORT', default='6379'))],
         },
     },
 }
