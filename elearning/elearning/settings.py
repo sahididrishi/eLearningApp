@@ -71,14 +71,10 @@ ASGI_APPLICATION = 'elearning.asgi.application'  # For Channels
 
 # Database (SQLite for dev; change to PostgreSQL in production)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'elearning_db',
-        'USER': 'myprojectuser',
-        'PASSWORD': 'mypassword',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default='postgresql://postgres:postgres@localhost:5432/mysite',
+        conn_max_age=600
+    )
 }
 
 # Custom User Model
