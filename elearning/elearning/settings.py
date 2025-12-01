@@ -1,12 +1,13 @@
 
 import os
 from pathlib import Path
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'a7cbvyga#hubn)mcg*m$s^ryr-w$g7^*^$)14a_x)b6r$+tj#='
-DEBUG = True
-ALLOWED_HOSTS = []
+SECRET_KEY = os.environ.get('SECRET_KEY','unsafe-dev-key')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 
 # Crispy Forms Configuration
@@ -15,6 +16,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -70,8 +72,12 @@ ASGI_APPLICATION = 'elearning.asgi.application'  # For Channels
 # Database (SQLite for dev; change to PostgreSQL in production)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'elearning_db',
+        'USER': 'myprojectuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

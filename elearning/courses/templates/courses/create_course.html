@@ -1,16 +1,29 @@
-
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <h2>Create New Course</h2>
-        <form method="POST">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <button type="submit" class="btn btn-success">Create Course</button>
-        </form>
+    <div class="col-lg-8">
+        <div class="glass-card p-5 animate-float">
+            <div class="text-center mb-5">
+                <div class="d-inline-block p-3 rounded-circle bg-success bg-opacity-10 text-success mb-3">
+                    <i class="bi bi-plus-lg fs-2"></i>
+                </div>
+                <h2 class="fw-bold text-theme-main">Create New Course</h2>
+                <p class="text-theme-muted">Share your knowledge with the world.</p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="d-grid gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary-glow btn-lg">
+                        <i class="bi bi-rocket-takeoff me-2"></i> Launch Course
+                    </button>
+                    <a href="{% url 'users:profile' %}" class="btn btn-outline-glow">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

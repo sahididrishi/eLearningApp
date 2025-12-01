@@ -2,6 +2,8 @@ from rest_framework import viewsets, permissions
 from .models import Course, Enrollment, Feedback
 from .serializers import CourseSerializer, EnrollmentSerializer, FeedbackSerializer
 
+from users.permissions import IsTeacher
+
 class CourseViewSet(viewsets.ModelViewSet):
     """
     API endpoint for courses.
@@ -9,7 +11,13 @@ class CourseViewSet(viewsets.ModelViewSet):
     """
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            permission_classes = [permissions.IsAuthenticated, IsTeacher]
+        else:
+            permission_classes = [permissions.IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
         # Automatically set the current user as teacher when creating a course.

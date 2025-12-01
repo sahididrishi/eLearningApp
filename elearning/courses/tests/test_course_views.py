@@ -24,7 +24,8 @@ class CourseViewsTest(TestCase):
 
     def test_student_cannot_upload_material_negative(self):
         self.client.login(username='student', password='pass')
-        url = reverse('courses:upload-material', args=[some_course.id])
+        course = Course.objects.create(title='Test Course', description='Desc', teacher=self.teacher)
+        url = reverse('courses:upload-material', args=[course.id])
         data = {'title': 'Material', 'file': ''}  # or an invalid file
         response = self.client.post(url, data)
         self.assertNotEqual(response.status_code, 200)  # 403 or redirect

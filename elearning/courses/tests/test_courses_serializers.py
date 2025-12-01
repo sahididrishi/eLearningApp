@@ -11,7 +11,7 @@ def test_course_serializer_positive():
     data = {'title': 'Serialized Course', 'description': 'Desc', 'teacher': teacher.id}
     serializer = CourseSerializer(data=data)
     assert serializer.is_valid(), serializer.errors
-    course = serializer.save()
+    course = serializer.save(teacher=teacher)
     assert course.title == 'Serialized Course'
 
 @pytest.mark.django_db

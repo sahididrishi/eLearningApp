@@ -6,7 +6,7 @@ class ChatViewsTest(TestCase):
     def setUp(self):
         self.user = CustomUser.objects.create_user(username='chatuser', password='pass')
         self.client.login(username='chatuser', password='pass')
-        self.url = reverse('chat:chat-room', args=['global'])
+        self.url = reverse('chat:global-chat-room')
 
     def test_chat_room_view_positive(self):
         response = self.client.get(self.url)

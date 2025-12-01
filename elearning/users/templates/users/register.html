@@ -1,16 +1,49 @@
-
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2>Register</h2>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form|crispy }}
-            <button type="submit" class="btn btn-primary">Sign Up</button>
-        </form>
+<div class="row min-vh-75 align-items-center">
+    <!-- Left Side: Branding/Art -->
+    <div class="col-lg-6 d-none d-lg-block">
+        <div class="pe-lg-5">
+            <div class="glass-card p-4 d-inline-block mb-4 animate-float">
+                <i class="bi bi-rocket-takeoff-fill fs-1 text-secondary"></i>
+            </div>
+            <h1 class="display-4 fw-bold text-theme-main mb-3">Join the Future</h1>
+            <p class="lead text-theme-muted mb-4">
+                Start your journey today. Create an account to unlock premium courses and join a global community of
+                learners.
+            </p>
+            <div class="d-flex gap-3">
+                <div class="d-flex align-items-center text-theme-muted">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i> Free Account
+                </div>
+                <div class="d-flex align-items-center text-theme-muted">
+                    <i class="bi bi-check-circle-fill text-success me-2"></i> No Credit Card
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Side: Register Form -->
+    <div class="col-lg-5 offset-lg-1">
+        <div class="glass-card p-5">
+            <h2 class="fw-bold text-theme-main mb-4">Create Account</h2>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn btn-primary-glow btn-lg">
+                        Sign Up <i class="bi bi-person-plus ms-2"></i>
+                    </button>
+                </div>
+            </form>
+            <div class="text-center mt-4">
+                <p class="text-theme-muted">
+                    Already have an account? <a href="{% url 'users:login' %}" class="text-primary fw-bold">Log In</a>
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
